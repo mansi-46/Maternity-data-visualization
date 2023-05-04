@@ -1,0 +1,134 @@
+---
+title: "Maternity Dataset"
+author: "Mansi Patel and Dev Sukhadia"
+date: "2022-12-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(ggfortify)
+library(broom)
+library(kableExtra)
+library(ggrepel)
+library(lubridate)
+
+```
+
+## Introduction
+
+Describe your questions here.
+
+1. Find which age group of females usually have children? See age group with max count of mothers and min count of mothers.
+
+2. From the data set we will find whether younger age women had more hospital visits. which age group women had max number of visits and whether they were smoker or non smoker.
+
+3. Find the relation between weight of babies, weight of mothers and smoking habit. To see if mother with smoking habits have babies with less weight.
+
+4. A linear model to predict if mother with smoking habits have babies which are under weight
+
+5. What is the relation between some of the physical factors of baby and mother, during pregnancy 
+
+## Data
+```{r}
+maternity <- read_csv(here("data", "nc.csv"))
+dplyr::glimpse(maternity)
+summary(maternity)
+```
+
+Describe your data here.
+
+* This is a maternity data with 1000 observation of birth records released in North Caroline in 2004.   It describes physic of mother and baby. It also has data on age of mother and father. Marital        status of women during birth. 
+
+* Categorical variables:
+ 
+  1. mature: Maturity status of mother.
+  2. premie: if baby was premature - premie or full term baby.
+  3. marital: married or un-married at time of birth 
+  4. lowbirthweight: low is under weight baby.
+  5. gender: gender of the baby.
+  6. Habit: Is the mother smoker or not.
+  7. whitemom : white mom or not.
+ 
+* Quantitative Variable
+
+  1. fage: father's age in years
+  2. mage: mother's age in years.
+  3. weeks: length of pregnancy in weeks
+  4. visits: number of hospital visits.
+  5. gained: weight gained by mom in pounds.
+  6. weight: weight of the baby at birth in pounds
+ 
+* There are 1000 observations and 13 variable.
+
+## Exploratory analysis
+
+Include required visualzations and any useful exploratory visualizations you created here
+
+Here we can see that most of the mothers are in there early 20s and least number of female give birth in there 50s. 
+
+```{r}
+maternity |> ggplot(aes(mage)) + geom_histogram() + labs(title="Age of maximum number of mothers", x="age of the mother in (yrs) ")
+
+```
+We see that number of visits vs mage doesn't change a lot when the mother is smoker. However, we do see that with the increase in age of mother their is a little increase in number of visits to hospital. On contrary, females with smoking habit see that with increasing age the graph goes in negative direction so with increasing age number of visits declines a little for smoker moms.
+
+
+```{r}
+
+maternity |> na.omit() |> ggplot(aes(mage, visits, color = habit)) + geom_point() +  geom_smooth(method = "lm", formula = y ~ splines::bs(x))
+```
+
+3. The slop of the linear model was negative so it did predict from the trend that if the mother had smoking habit the weight of the baby should reduce but we see that the histogram obtained is not evenly distributed so we can say that it that weight of the baby do depend a lot on the smoking habit of the mother.  
+
+```{r}
+linear_model <- lm(weight ~ habit, data = maternity)
+tidy(linear_model, conf.int = TRUE) |> kable(digits = 3)
+tibble(residuals = residuals(linear_model)) |> ggplot(aes(residuals)) + geom_histogram(bins = 10) +
+  labs(title="Predicting whether, mothers with smoking habit will have baby with less weight")
+```
+
+
+## Final visualizations
+
+Include the most important visualizations that help you answer your question here.
+
+A visualization to check the effect of smoking on visits to mothers who had a premature baby in comparison to mothers who carried baby to full term.
+```{r}
+maternity |> na.omit() |> ggplot(aes(mage, visits, color = habit)) + geom_point()+ theme_bw() + scale_color_manual(values = c("blue", "orange")) + facet_wrap(~premie) + geom_smooth(method = "lm", formula = y ~ splines::bs(x)) + labs(title="Relation between mother's age and visits made to the hospital",
+         subtitle="Observe the ratio of premie and full term babies for mothers with smoking habits",
+         x="age of the mother in (yrs) ",
+         y="visits made to hospital")
+```
+
+A visualization to see relation between various quantitative variables likes mother's age, number of visits, weight of baby, and weight gained by mother.
+```{r}
+maternity_ss <- maternity |> na.omit() |> select(weight, mage, gained, visits)
+
+maternity_pca <- prcomp(maternity_ss, center = T, scale. = T)
+
+autoplot(maternity_pca, data = maternity_ss, loadings = T, loadings.label = T) + labs(
+         x="1st Principle Component (30.91%)",
+         y="2nd Principle component (28.56%)") 
+```
+## Interpretation and conclusion
+
+Interpret your final visuzlations here to answer the questions posed in your introduction.
+
+From 1st visualization, it can be seen that the mother with premature babies had less visits on an average, moreover, for non smoker mothers, with increasing age, the number of visits decreased for mother with premature babies while it gradually increased for mother carrying full term.
+
+From 2nd visualization, it can be seen the angles between all of the variables are less and all variables have linear relation meaning increasing one variable will lead to increase in all of them. The amount of increase may differ but relation remains linear.
+
+To conclude, we would say that surprisingly, we did not see any notable effect of smoking on mother's pregnancy, i.e., smoking did not cause babies to born prematurely, further, it also did not affect the weight of the baby.
+Also we found that the quantitative variables are linearly related to each other. Particular relation might vary, but every relation is linear.
+
+## Team work
+
+Both team members formulated the questions together. 
+Dev found the data about Maternity, and created the scatterplot and facet plot.
+Mansi solved a problem with reading the data into R and made PCA and linear model.
+Both team members wrote the report and prepared the oral presentation, but Mansi did most of the work on the presentation slides and Dev did most of the work on the report.
+Both team members edited and revised the visualizations and text, finding and correcting many minor errors.
+

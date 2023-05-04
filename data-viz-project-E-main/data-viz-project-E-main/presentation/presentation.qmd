@@ -1,0 +1,93 @@
+
+---
+title: "Maternity Data"
+author: "Mansi Patel and Dev Sukhadia"
+date: "December 1, 2022"
+format: revealjs
+---
+
+```{r include=FALSE, messages=FALSE, warning=FALSE}
+library(tidyverse)
+library(here)
+library(ggfortify)
+library(broom)
+library(kableExtra)
+library(ggrepel)
+library(lubridate)
+maternity <- read_csv(here("data", "nc.csv"))
+dplyr::glimpse(maternity)
+summary(maternity)
+```
+
+
+## Data set information {background-image="https://images.pond5.com/mom-and-dad-hold-babys-087986872_prevstill.jpeg"}
+
+This is a data set on 1,000 randomly sampled births from the birth records released by the state of North Carolina in 2004. This data set has been of interest to medical researchers who are studying the relation between habits and practices of expectant mothers and the birth of their children.
+
+7 categorical variables and 6 quantitative variables. We are using all the quantitative variables like number of visits made to the hospital, weight of mothers, weight of their babies, age of mother and father. Later, we have analysed how the categorical variables have affected them.
+
+## Goals 
+
+* Does smoking habit of mother affect whether baby is full term or premature. We see the relation between mother's age and the visits made to the hospital along with how they are co-related with smoking habit of the mother and baby's gender. 
+
+* We predicted that if the mother has smoking habit during pregnancy, will the weight of the new born baby be less.
+
+* With the help of PCA plots. We see how the quantitative variables are in variance with each other and this will help to figure out how one factor of the pregnancy affects another.
+
+
+
+## Scatter plot to understand data {.scrollable}
+
+It can be seen that there are clearly that irrespective of the age most of the females had 10 - 15 visits to the hospital. However, we do see that mother carrying females babies did have a little bit more visits around 18-25 then the mother's carrying males. Surprisingly, not my smokers necessarily had premature babies. But we can say from the graph that if mother is a smoker carrying a male baby they will have a premature baby.
+
+```{r echo=TRUE, fig.align="center", out.height= "200%", out.width="200%", warning=FALSE}
+#| code-fold: true
+#| code-summary: "show code"
+#| code-overflow: scroll
+maternity |> na.omit() |> ggplot(aes(mage, visits, color = habit)) + geom_point()+ theme_bw() + scale_color_manual(values = c("blue", "orange")) + facet_grid(gender ~ premie) + geom_smooth(method = "lm", formula = y ~ splines::bs(x)) + labs(title="Relation between mother's age and visits made to the hospital",
+         subtitle="Observe the ratio of premie and full term babies for mothers with smoking habits",
+         x="age of the mother in (yrs) ",
+         y="visits made to hospital")
+```
+
+## Prediction model {.scrollable}
+
+The linear model tries to predict that if mother has smoking habit the weight of the baby must be less. However, visualization shows that the histogram is not evenly distributed which shows that the observations for the weight of the baby predicted by our model was not very similar to the actual observation seen in data set. 
+
+
+```{r echo=TRUE, fig.align="center", out.height= "200%", out.width="200%"}
+#| code-fold: true
+#| code-summary: "show code"
+linear_model <- lm(weight ~ habit, data = maternity)
+tidy(linear_model, conf.int = TRUE) |> kable(digits = 3)
+tibble(residuals = residuals(linear_model)) |> ggplot(aes(residuals)) + geom_histogram(bins = 10) +
+  labs(title="Predicting whether, mothers with smoking habit will have baby with less weight")
+```
+
+## Observing relation between some important factors during pregnancy {.scrollable}
+
+Here we can see how most quantitative variables vary from one another.
+30.91% of the variation in data can be seen on X axis so on 1st principal component, which means in all 6 dimensions 30.91% variation is just because of 1 variable. 2nd principal component shows variation about 28.56% so the total variation between data in the plane is 59.47%. 
+
+
+```{r echo=TRUE, fig.align="center", out.height= "200%", out.width="200%"}
+#| code-fold: true
+#| code-summary: "show code"
+#| code-overflow: scroll
+
+maternity_ss <- maternity |> na.omit() |> select(weight, mage, fage, gained, weeks, visits)
+
+maternity_pca <- prcomp(maternity_ss, center = T, scale. = T)
+
+autoplot(maternity_pca, data = maternity_ss, loadings = T, loadings.label = T) + labs(
+         x="1st Principle Component (30.91%)",
+         y="2nd Principle component (28.56%)") 
+
+```
+
+
+## Conclusion
+
+All the quantitative variables like weight of baby, weight gained by mother, mother's age, length of pregnancy, visits to hospital, and age of mother and father are closely related to each other. Which mean changing any one of the variable will not cause any major changes in the observation of other.
+To conclude we can see that smoking habit did not cause any drastic effect on whether the baby was full term or pre mature. Moreover, the linear model did predict that baby might have less weight if the mother has smoking habit but we see that actual observation in the data set shows that smoking habit didn't cause much difference in the weight of the baby.
+

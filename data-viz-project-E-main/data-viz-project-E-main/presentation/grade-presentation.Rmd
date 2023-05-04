@@ -1,0 +1,44 @@
+---
+title: "Presentation assessment"
+author: "Andrew Irwin"
+date: "2022-12-07"
+output: 
+  html_document:
+    keep_md: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(kableExtra)
+library(janitor)
+# team <- "A"
+```
+
+```{r echo=FALSE}
+grade <- tribble(
+  ~ Component, ~ Score, ~ Maximum,
+  "Project goals", NA, 2,
+  "Data description", NA, 2,
+  "Visualizations", NA, 3,
+  "Summary", NA, 2,
+  "Quality of visual aids (slides)", NA, 1
+  )
+grade$Score = c(1.5, 2, 2.5, 1.5, 1)
+grade %>% 
+  adorn_totals() %>%
+  kable() %>%
+  kable_styling(full_width = FALSE)
+```
+
+## Comments
+
+Great background information for your presentation. Some questions were a bit vague -- you looked at smoking and what other factors?
+
+Some figures, e.g., PCA, were hard to read. The premie + smoking figure was quite complicated and not easy to learn from.
+
+Your conclusions were overly complicated and didn't give an easy to digest answer to your questions.
+
+
+

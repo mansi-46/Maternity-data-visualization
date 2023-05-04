@@ -1,0 +1,21 @@
+---
+title: "Proposal instructions"
+author: "Andrew Irwin"
+date: "2022-10-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The purpose of your project proposal is to get your team thinking about data, questions to be investigated, and possible visualizations to use in your analysis.
+
+For your proposal
+
+* revise the template `proposal.Rmd`,
+* include a copy of your data in the folder `data` in this repository,
+* knit your proposal to html, and 
+* commit your changes and push them to github.
+
+I will use the file "grade-proposal.Rmd" to assess your work and provide feedback on your plan. You are free to change any aspect of your proposal (questions, data, visualizations) while you work on your project.

@@ -1,0 +1,98 @@
+---
+title: "Project proposal"
+author: "Mansi Patel, Dev Sukhadia"
+date: "2021-10-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+# add any other packages you need here
+# if you need a package installed from github include as a comment the 
+# instructions to install the package, e.g.,
+# devtools::install_github("wilkelab/ggtext")
+```
+
+As you work on this proposal, write your responses under the corresponding heading. Delete the instructions (including this paragraph) before submitting your proposal.
+
+## Questions to be investigated
+
+  1. From the data set we will find whether younger age women had more hospital visits. which age group women        had max number of visits and whether they had premies or full term baby.
+
+  2. Find the relation between weight of babies, weight of mothers, marital status, and smoking habit. To see if      mother with smoking habits have babies with less weight.
+
+  3. A linear model to predict if unmarried young aged mother with smoking habits have premie babies which are       under weight
+
+## Data to be used
+
+Describe the data you plan to use including
+
+* This is a maternity data with 1000 observation of birth records released in North Caroline in 2004. It describes physic of mother and baby. It also has data on age of mother and father. Marital status of women during birth. 
+
+* Categorical variables:
+ 
+  1. mature: Maturity status of mother.
+  2. premie: if baby was premature - premie or full term baby.
+  3. marital: married or un-married at time of birth 
+  4. lowbirthweight: low is under weight baby.
+  5. gender: gender of the baby.
+  6. Habit: Is the mother smoker or not.
+  7. whitemom : white mom or not.
+ 
+* Quantitative Variable
+
+  1. fage: father's age in years
+  2. mage: mother's age in years.
+  3. weeks: length of pregnancy in weeks
+  4. visits: number of hospital visits.
+  5. gained: weight gained by mom in pounds.
+  6. weight: weight of the baby at birth in pounds
+ 
+* There are 1000 observations and 13 variable.
+
+* Metadata 
+  
+  Data set on 1,000 randomly sampled births from the birth records released by the state of North Carolina in     2004. This data set has been of interest to medical researchers who are studying the relation between habits    and practices of expectant mothers and the birth of their children.
+
+
+Read the data into R here. Present a summary table or the output of `skimr::skim()` on your data to supplement the descriptive information you've provided.
+
+```{r}
+matarnity <- read_csv(here("data", "nc.csv"))
+dplyr::glimpse(matarnity)
+summary(matarnity)
+# An example of how to read a file in the data directory
+# The here function above will let me find your data on my computer even though we organize our files
+# outside the course files differently. Do not remove the "here" function call or change "data". Just
+# change "my_data.csv" to the name of your data file.
+# Your data does not need to be in csv format.
+```
+
+## Ideas for visualization
+
+Using histogram for first question to find relation between mother's age and the number of visits.
+
+Using scatter plot to see relation between weight of baby and weight gained by mother. Facets to see the categorical variable of premie and habits. Using smoothing to see the relation. 
+
+For prediction first we can make linear model and find residuals of the probability that mother with lower weight has premie. Then compare that with actual data using linear regression.
+
+We can also make a visualization with PCA so see variation between women age, baby weight, visits to the hospital, length of pregnancy 
+
+## Team planning
+
+Dev will work on the scatter plots, Mansi will work on the PCA and creating prediction model. Mansi will plan and draft the oral presentation. DEv will plan and draft the written report. Both Mansi and Dev will give feedback on the teammate's work and provide constructive suggestions.
+
+We both are going to analyze the same dataset. 
+
+## Challenges anticipated
+
+What method can we use to give predictions if premie was born to smoking habit, unmarried mother.
+Also some suggestions on building MDS and PCA models. 
+
+## References
+
+ https://www.openintro.org/book/statdata/index.php?data=nc
+If you used any sources as inspiration give them as well. None are required.
+

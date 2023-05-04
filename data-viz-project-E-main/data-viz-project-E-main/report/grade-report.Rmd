@@ -1,0 +1,40 @@
+---
+title: "Report assessment"
+author: "Andrew Irwin"
+date: "2022-12-10"
+output: 
+  html_document:
+    keep_md: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(kableExtra)
+library(janitor)
+# team <- "A"
+```
+
+```{r echo=FALSE}
+grade <- tribble(
+  ~ Component, ~ Score, ~ Maximum,
+  "Questions and Introduction", NA, 2,
+  "Data description", NA, 2,
+  "Exploratory visualizations", NA, 4,
+  "Final visualizations", NA, 4,
+  "Interpretation and conclusion", NA, 2,
+  "Team member contributions", NA, 1
+  )
+grade$Score = c(1.5, 2, 3, 3, 1.5, 1)
+grade |> 
+  adorn_totals() |>
+  kable() |>
+  kable_styling(full_width = FALSE)
+```
+
+## Comments
+
+You have lots of questions, but the larger goal is not obvious.
+
+
